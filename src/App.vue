@@ -4,11 +4,11 @@
       v-if="loggedUser"
       persistent 
       dark 
-      :mini-variant.sync="mini" 
+      mini-variant.sync 
       v-model="drawer" 
       overflow 
       class="secondary"
-      enable-resize-watcher="true">
+      enable-resize-watcher>
       <v-list class="pa-0">
         <v-list-tile avatar tag="div" class="primary">
           <v-list-tile-content>

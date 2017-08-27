@@ -90,17 +90,69 @@ export const store = new Vuex.Store({
         )
     },
     createRecipe ({commit}, payload) {
-      firebase.database().ref('recipes').push(payload)
+      const recipe = {
+        name: payload.name,
+        type: payload.type,
+        cuisine: payload.cuisine,
+        imageUrl: payload.imageUrl,
+        heartCount: payload.heartCount,
+        starCount: payload.starCount
+      }
+      firebase.database().ref('recipes').push(recipe)
         .then((data) => {
           const key = data.key
           commit('createRecipe', {
-            ...payload,
+            ...recipe,
             id: key
+          })
+          payload.components.forEach(function (component) {
+            console.log('Ez az első komp' + component)
+            const componentPayload = {
+              id: key,
+              name: component.name,
+              recipeText: component.recipeText,
+              ingredients: component.ingredients
+            }
+            store.dispatch('createComponent', componentPayload)
           })
         })
         .catch((error) => {
-          console.log(error)
+          console.log('Error in recipes' + error)
         })
+    },
+    createComponent ({commit}, payload) {
+      console.log('Kreáty elindul')
+      const component = {
+        id: payload.id,
+        name: payload.name,
+        recipeText: payload.recipeText
+      }
+      firebase.database().ref('components').push(component)
+        .then((data) => {
+          const componentKey = data.key
+          payload.ingredients.forEach(function (ingredient) {
+            ingredient.key = componentKey
+            store.dispatch('createIngredient', ingredient)
+            console.log('Create lement LUL')
+          })
+        })
+        .catch((error) => {
+          console.log('Error in components' + error)
+        })
+    },
+    createIngredient ({commit}, payload) {
+      const ing = {
+        name: payload.name,
+        quantity: payload.quantity,
+        unit: payload.unit
+      }
+      firebase.database().ref('components' + '/' + payload.key).push(ing)
+      .then((data) => {
+        console.log('Működik ! El sem hiszem !')
+      })
+      .catch((error) => {
+        console.log('Szar az egész' + error)
+      })
     }
   },
   getters: {

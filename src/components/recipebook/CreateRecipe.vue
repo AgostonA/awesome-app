@@ -132,8 +132,10 @@
           cuisine: this.cuisine,
           imageUrl: this.imageUrl,
           heartCount: this.heartCount,
-          starCount: this.starCount
+          starCount: this.starCount,
+          components: this.components
         }
+        console.log(this.components)
         this.$store.dispatch('createRecipe', recipeData)
         this.$router.push('/RecipeList')
       },

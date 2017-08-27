@@ -28,7 +28,6 @@ new Vue({
     })
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log('bejelentkezve')
       } else {
         this.$router.push('/')
       }
