@@ -1,6 +1,6 @@
 # awesome-app
 
-> The best app in the world
+> Vue-Vuetify-Firebase-Recipebook
 
 ## Build Setup
 
