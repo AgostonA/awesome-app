@@ -30,12 +30,13 @@
     <v-layout row wrap>
       <v-flex
         xs12 sm6 md6 lg4 xl3
-        v-for="recipe in recipes"
+        v-for="recipe in displayedRecipes"
         :key="recipe.id">
           <v-card>
             <v-card-media
               :src="recipe.imageUrl"
-              height="200px">
+              height="200px"
+              @click.stop="viewRecipe(recipe.id)">
               <v-container fill-height fluid>
                 <v-layout fill-height column>
                   <v-flex xs12 align-start justify-end flexbox>
@@ -83,16 +84,29 @@
         selectedCategories: [],
         selectedCouisines: [],
         categories: [ 'Előétel', 'Főétel' ],
-        cousines: [ 'Japán', 'Koreai', 'Magyar', 'Olasz', 'Amcsi' ]
+        cousines: [ 'Japán', 'Koreai', 'Magyar', 'Olasz', 'Amcsi' ],
+        search: ''
       }
     },
     computed: {
       recipes () {
         return this.$store.getters.recipes
+      },
+      displayedRecipes () {
+        var that = this
+        return this.recipes.filter(function (recipe) {
+          return recipe.name.toLowerCase().includes(that.search.toLowerCase())
+        })
       }
     },
     created () {
       this.$store.dispatch('loadRecipes')
+      this.displayedRecipes = this.$store.getters.recipes
+    },
+    methods: {
+      viewRecipe (recipeId) {
+        this.$router.push('/RecipePage' + recipeId)
+      }
     }
   }
 </script>

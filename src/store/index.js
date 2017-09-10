@@ -8,7 +8,8 @@ export const store = new Vuex.Store({
   state: {
     user: null,
     error: null,
-    recipes: []
+    recipes: [],
+    detailedRecipe: null
   },
   mutations: {
     setUser (state, payload) {
@@ -28,6 +29,9 @@ export const store = new Vuex.Store({
     },
     createRecipe (state, payload) {
       state.recipes.push(payload)
+    },
+    setRecipe (state, payload) {
+      state.detailedRecipe = payload
     }
   },
   actions: {
@@ -106,7 +110,6 @@ export const store = new Vuex.Store({
             id: key
           })
           payload.components.forEach(function (component) {
-            console.log('Ez az első komp' + component)
             const componentPayload = {
               id: key,
               name: component.name,
@@ -117,15 +120,15 @@ export const store = new Vuex.Store({
           })
         })
         .catch((error) => {
-          console.log('Error in recipes' + error)
+          console.log('Error while saving recipes ' + error)
         })
     },
     createComponent ({commit}, payload) {
-      console.log('Kreáty elindul')
       const component = {
         id: payload.id,
         name: payload.name,
-        recipeText: payload.recipeText
+        recipeText: payload.recipeText,
+        ingredients: {}
       }
       firebase.database().ref('components').push(component)
         .then((data) => {
@@ -133,26 +136,54 @@ export const store = new Vuex.Store({
           payload.ingredients.forEach(function (ingredient) {
             ingredient.key = componentKey
             store.dispatch('createIngredient', ingredient)
-            console.log('Create lement LUL')
           })
         })
         .catch((error) => {
-          console.log('Error in components' + error)
+          console.log('Error while saving components ' + error)
         })
     },
     createIngredient ({commit}, payload) {
-      const ing = {
+      const ingredient = {
         name: payload.name,
         quantity: payload.quantity,
         unit: payload.unit
       }
-      firebase.database().ref('components' + '/' + payload.key).push(ing)
-      .then((data) => {
-        console.log('Működik ! El sem hiszem !')
-      })
+      firebase.database().ref('components/' + payload.key + '/ingredients/').push(ingredient)
       .catch((error) => {
-        console.log('Szar az egész' + error)
+        console.log('Error while saving ingredients ' + error)
       })
+    },
+    loadRecipe ({commit}, id) {
+      const recipe = {}
+      firebase.database().ref('recipes/' + id).once('value')
+        .then((data) => {
+          recipe.name = data.val().name
+          recipe.imageUrl = data.val().imageUrl
+          recipe.type = data.val().type
+
+          firebase.database().ref('components').orderByChild('id').equalTo(id).once('value')
+            .then((data) => {
+              const components = []
+              const obj = data.val()
+              console.log(data.val())
+              for (let key in obj) {
+                components.push({
+                  id: key,
+                  name: obj[key].name,
+                  recipeText: obj[key].recipeText,
+                  ingredients: obj[key].ingredients
+                })
+              }
+              recipe.components = components
+              commit('setRecipe', recipe)
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   },
   getters: {
@@ -164,6 +195,9 @@ export const store = new Vuex.Store({
     },
     recipes (state) {
       return state.recipes
+    },
+    detailedRecipe (state) {
+      return state.detailedRecipe
     }
   }
 })

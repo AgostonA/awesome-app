@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Login from '@/components/Login'
 import RecipeList from '@/components/recipebook/RecipeList'
 import CreateRecipe from '@/components/recipebook/CreateRecipe'
+import RecipePage from '@/components/recipebook/RecipePage'
 import BoardGameList from '@/components/boardgames/BoardGameList'
 
 Vue.use(Router)
@@ -29,6 +30,11 @@ export default new Router({
       path: '/CreateRecipe',
       name: 'Recept létrehozása',
       component: CreateRecipe
+    },
+    {
+      path: '/RecipePage:recipeId',
+      name: 'Recept',
+      component: RecipePage
     },
     {
       path: '/BoardGameList',
