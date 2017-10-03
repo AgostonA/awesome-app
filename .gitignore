@@ -64,4 +64,8 @@ typings/
 # db config
 config/db.js
 
+#deploy
+dist
+public
+
 # End of https://www.gitignore.io/api/node
