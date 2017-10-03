@@ -165,6 +165,8 @@ export const store = new Vuex.Store({
           recipe.name = data.val().name
           recipe.imageUrl = data.val().imageUrl
           recipe.type = data.val().type
+          recipe.starCount = data.val().starCount
+          recipe.heartCount = data.val().heartCount
 
           firebase.database().ref('components').orderByChild('id').equalTo(id).once('value')
             .then((data) => {
