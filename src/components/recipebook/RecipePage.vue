@@ -1,9 +1,14 @@
 <template>
-  <v-layout column>
+ <v-layout row wrap v-if="loading">
+    <v-flex xs12 class="text-xs-center">
+      <v-progress-linear v-bind:indeterminate="true"></v-progress-linear>
+    </v-flex>
+  </v-layout>
+  <v-layout column v-else>
     <v-flex xs-12>
       <h4>{{ recipe.name }}</h4>
       <v-layout row wrap>
-        <v-flex sm6 xs12>
+        <v-flex sm6 xs12 order-xs2 order-sm1>
           <v-card>
             <ul v-for="component in recipe.components">
               <li v-for="ingredient in component.ingredients">
@@ -12,8 +17,8 @@
             </ul>
           </v-card>
         </v-flex>
-        <v-flex sm6 xs12>
-           <img :src="recipe.imageUrl"/>
+        <v-flex sm6 xs12 order-xs1 order-sm2>
+           <img class="recipe-picture" :src="recipe.imageUrl"/>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -38,6 +43,9 @@
     computed: {
       recipe () {
         return this.$store.getters.detailedRecipe
+      },
+      loading () {
+        return this.$store.getters.loading
       }
     },
     created () {
@@ -45,3 +53,13 @@
     }
   }
 </script>
+
+<style lang="stylus">
+
+  .recipe-picture {
+    display: block;
+    margin: auto;
+    width: 100%;
+  }
+
+</style>

@@ -9,7 +9,8 @@ export const store = new Vuex.Store({
     user: null,
     error: null,
     recipes: [],
-    detailedRecipe: null
+    detailedRecipe: null,
+    loading: false
   },
   mutations: {
     setUser (state, payload) {
@@ -32,6 +33,9 @@ export const store = new Vuex.Store({
     },
     setRecipe (state, payload) {
       state.detailedRecipe = payload
+    },
+    setLoading (state, payload) {
+      state.loading = payload
     }
   },
   actions: {
@@ -155,6 +159,7 @@ export const store = new Vuex.Store({
     },
     loadRecipe ({commit}, id) {
       const recipe = {}
+      commit('setLoading', true)
       firebase.database().ref('recipes/' + id).once('value')
         .then((data) => {
           recipe.name = data.val().name
@@ -176,13 +181,16 @@ export const store = new Vuex.Store({
               }
               recipe.components = components
               commit('setRecipe', recipe)
+              commit('setLoading', false)
             })
             .catch((error) => {
               console.log(error)
+              commit('setLoading', false)
             })
         })
         .catch((error) => {
           console.log(error)
+          commit('setLoading', false)
         })
     }
   },
@@ -198,6 +206,9 @@ export const store = new Vuex.Store({
     },
     detailedRecipe (state) {
       return state.detailedRecipe
+    },
+    loading (state) {
+      return state.loading
     }
   }
 })
